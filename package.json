@@ -1,0 +1,22 @@
+{
+  "name": "go-chat",
+  "version": "1.0.0",
+  "description": "best chat app in the world",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "chat",
+    "nepali",
+    "nepal",
+    "strangers"
+  ],
+  "author": "bhuwan adhikari",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^9.5.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  }
+}
