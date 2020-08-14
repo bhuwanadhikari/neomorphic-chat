@@ -15,6 +15,9 @@
     "nepal",
     "strangers"
   ],
+  "nodemonConfig": {
+    "ignore": ["pages/*", "components/*"]
+  },
   "author": "bhuwan adhikari",
   "license": "ISC",
   "dependencies": {

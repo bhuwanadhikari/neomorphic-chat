@@ -1,36 +1,48 @@
-const express = require('express');
-const next = require('next');
-const cors = require('cors');
+const app = require('express')()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
+const next = require('next')
+
+const dev = process.env.NODE_ENV !== 'production'
+const nextApp = next({ dev })
+const nextHandler = nextApp.getRequestHandler()
+
+// fake DB
+const messages = [];
+const pairs = [];
+const ones = []
+
+// socket.io server
+io.on('connection', socket => {
+    console.log("connected")
+    ones.push(socket.id);
+
+    //when disconnects
+    socket.on('disconnect', ()=> {
+        console.log('disconnnected')
+        ones.splice(ones.indexOf(socket.id), 1);
+    });
 
 
-const dev = process.env.NODE_ENV != 'production';
-const nextApp = next({ dev });
-const handle = nextApp.getRequestHandler();
 
-const server = express();
-
-var rtserver = require('http').createServer(server);
-const io = module.exports.io = require('socket.io')(rtserver);
-
-const SocketManager = require('./rtServe');
-
-server.use(cors());
-
-io.on('connection', SocketManager)
-
-nextApp.prepare()
-    .then(() => {
-
-        server.get('*', (req, res) => {
-            handle(req, res)
-        })
-
-        server.listen(3000, (err) => {
-            if (err) throw err;
-            console.log('On on port 3000')
-        })
+    console.log(ones);
+    socket.on('message', (data) => {
+        console.log(data)
+        socket.emit('message', data)
     })
-    .catch((ex) => {
-        console.error(ex.stack);
-        process.exit();
+})
+
+nextApp.prepare().then(() => {
+    //   app.get('/messages', (req, res) => {
+    //     res.json(messages)
+    //   })
+
+    app.get('*', (req, res) => {
+        return nextHandler(req, res)
     })
+
+    server.listen(3000, (err) => {
+        if (err) throw err
+        console.log('> Ready on http://localhost:3000')
+    })
+})
