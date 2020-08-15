@@ -17,7 +17,7 @@ io.on('connection', socket => {
     console.log("connected")
     ones.push(socket.id);
 
-    socket.emit('connection')
+    socket.emit('connection');
 
     //when disconnects
     socket.on('disconnect', ()=> {

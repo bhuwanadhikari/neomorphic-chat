@@ -8,6 +8,9 @@ import { serverUrl } from '../constants';
 import '../styles.scss';
 import Layout from '../components/Layout';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faPaperPlane, faStop } from '@fortawesome/free-solid-svg-icons'
+
 
 
 function useSocket(url) {
@@ -77,35 +80,61 @@ function Chat() {
         e.preventDefault();
     }
 
+    const _keyDown = (e) => {
+        console.log(e);
+        if (e.Key === 'Enter') {
+            _send()
+        }
+    }
+
     return <>
         <Layout>
-            <div className="components">
-                <div>here is the chatpage</div>
-
-
-                <div>Messages</div>
+            <div className="chatbody">
                 <div>
                     <ul>
                         {messages.map((instance, index) => {
-                            return <li key={index}> {instance.body}</li>
+                            return <div className={`chip message`} key={index}> {instance.body}</div>
                         })}
+
+
+                        <div className={``}> <div className={`chip message `}> Hello</div></div>
+                        <div className={``}> <div className={`chip message`}> Hello</div></div>
+                        <div className={`mero`}> <div className={`chip message`}> Hello</div></div>
+                        <div className={`mero`}> <div className={`chip message `}> Hello</div></div>
+                        <div className={``}> <div className={`chip message`}> Hello</div></div>
+                        <div className={``}> <div className={`chip message `}> Hello</div></div>
+                        <div className={`mero`}> <div className={`chip message `}> Hello</div></div>
                     </ul>
                 </div>
 
 
             </div>
 
-            <div className="components footer">
-                <div>
-                    stop
-                </div>
-                <form onSubmit={_send}>
-                    <input name="body" type="text" value={messageData.body} onChange={_messageDataChange} />
-                    <button type='submit'>Submit</button>
+            <div className="footerWrapper">
+                <form className="footer" onSubmit={_send}>
+
+                    <div className="btn btn__secondary"><p>
+                        <FontAwesomeIcon icon={faStop} style={{ fontSize: '18px' }} color="#ef5783" />
+
+                    </p></div>
+                    <div className="form messageInput">
+                        <input
+                            className="form__input"
+                            name="body"
+                            type="text"
+                            value={messageData.body}
+                            onChange={_messageDataChange}
+                            placeholder="Type your message..."
+                            onKeyDown={_keyDown}
+                        />
+                    </div>
+                    <div
+                        className="btn btn__secondary iconButton"
+                    >
+                        <p>
+                            <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: '18px' }} color="#ef5783" /> </p>
+                    </div>
                 </form>
-                <div>
-                    send
-                </div>
             </div>
         </Layout>
 
