@@ -1,7 +1,5 @@
 import React from 'react';
 
-import Link from 'next/link';
-import Navigation from '../components/Navigation';
 import io from 'socket.io-client';
 import { serverUrl } from '../constants';
 
@@ -15,34 +13,27 @@ import { faPaperPlane, faStop } from '@fortawesome/free-solid-svg-icons'
 
 function useSocket(url) {
     const [socket, setSocket] = React.useState(null)
-
     React.useEffect(() => {
         const socketIo = io(url)
-
         setSocket(socketIo)
-
         function cleanup() {
             socketIo.disconnect()
         }
         return cleanup
-
-        // should only run once and not on every re-render,
-        // so pass an empty array
     }, [])
-
     return socket
 }
 
 
 
 function Chat() {
-
-
     const socket = useSocket(serverUrl)
-    const [messages, setMessages] = React.useState([]);
+    const [messagesArr, setMessagesArr] = React.useState([]);
     const [messageData, setMessageData] = React.useState({
         body: ''
-    })
+    });
+
+    const [last, setLast] = React.useState(null)
 
     React.useEffect(() => {
         function handleEvent(payload) {
@@ -56,19 +47,17 @@ function Chat() {
             })
 
             socket.on('message', data => {
-                const tempMessages = messages;
-                tempMessages.push(data);
-                setMessages(tempMessages)
-                setMessageData({ ...messageData, body: '' })
+                setMessagesArr((messagesArr) => [...messagesArr, data]);
+                setMessageData(messageData => ({ ...messageData, body: '' }));
             })
         }
     }, [socket]);
 
     React.useEffect(() => {
+        console.log(messagesArr.length)
+        setLast(messagesArr.length - 1)
+    }, [messagesArr])
 
-    }, [])
-
-    console.log(messages)
 
     const _messageDataChange = (e) => {
         const { type, name, value } = e.target;
@@ -76,34 +65,37 @@ function Chat() {
     }
 
     const _send = (e) => {
-        socket.emit('message', messageData)
+        socket.emit('message', {
+            body: messageData.body,
+            from: socket.id,
+            to: null,
+        })
         e.preventDefault();
     }
 
     const _keyDown = (e) => {
-        console.log(e);
         if (e.Key === 'Enter') {
             _send()
         }
     }
+
+    try {
+        var allMessages = document.getElementsByClassName("message");
+        console.log(allMessages[allMessages.length-1])
+        allMessages[allMessages.length-1].scrollIntoView();
+    } catch (e) { }
+
+
+    console.log("last element is", last)
 
     return <>
         <Layout>
             <div className="chatbody">
                 <div>
                     <ul>
-                        {messages.map((instance, index) => {
-                            return <div className={`chip message`} key={index}> {instance.body}</div>
+                        {messagesArr.map((instance, index) => {
+                            return <div className={`${instance.from === socket.id ? 'mero' : null}`} key={index}>  <div className={`chip message `}> {instance.body}</div></div>
                         })}
-
-
-                        <div className={``}> <div className={`chip message `}> Hello</div></div>
-                        <div className={``}> <div className={`chip message`}> Hello</div></div>
-                        <div className={`mero`}> <div className={`chip message`}> Hello</div></div>
-                        <div className={`mero`}> <div className={`chip message `}> Hello</div></div>
-                        <div className={``}> <div className={`chip message`}> Hello</div></div>
-                        <div className={``}> <div className={`chip message `}> Hello</div></div>
-                        <div className={`mero`}> <div className={`chip message `}> Hello</div></div>
                     </ul>
                 </div>
 
@@ -126,10 +118,12 @@ function Chat() {
                             onChange={_messageDataChange}
                             placeholder="Type your message..."
                             onKeyDown={_keyDown}
+                            autoComplete="off"
                         />
                     </div>
                     <div
                         className="btn btn__secondary iconButton"
+                        onClick={_send}
                     >
                         <p>
                             <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: '18px' }} color="#ef5783" /> </p>

@@ -12,8 +12,23 @@ function Index() {
 
     return <>
         <Layout>
-            <div>
-                <div>here is the homepage</div>
+            <div className='homepage'>
+
+                <div className="chip homechip">
+                    <div className="top">go chat</div>
+                    <div className="bottom">
+                        go chat is the best chat app in the world with
+                        more than one billion users.
+                    </div>
+                </div>
+
+                <Link href='/chat'>
+                    <a title="Start Chatting">
+                        <div className="chip btn btn__secondary">
+                            Start Chatting
+                    </div>
+                    </a>
+                </Link>
             </div>
         </Layout>
     </>

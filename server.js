@@ -10,7 +10,7 @@ const nextHandler = nextApp.getRequestHandler()
 // fake DB
 const messages = [];
 const pairs = [];
-const ones = []
+const ones = [];
 
 // socket.io server
 io.on('connection', socket => {
@@ -21,7 +21,7 @@ io.on('connection', socket => {
 
     //when disconnects
     socket.on('disconnect', ()=> {
-        console.log('disconnnected')
+        console.log('disconnnected');
         ones.splice(ones.indexOf(socket.id), 1);
     });
 

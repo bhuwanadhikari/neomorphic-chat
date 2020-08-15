@@ -23,17 +23,17 @@ function Navigation(props) {
     return (
         <>
             <nav className="navbar">
+                <Link href='/'>
+                    <a title="go-chat home page">
+                        <div className="chip btn btn__secondary">
+                            HOME    
+                    </div>
+                    </a>
+                </Link>
                 <Link href='/chat'>
                     <a title="Start Chatting">
                         <div className="chip btn btn__secondary">
                             CHAT
-                    </div>
-                    </a>
-                </Link>
-                <Link href='/'>
-                    <a title="go-chat home page">
-                        <div className="chip btn btn__secondary">
-                            ABOUT
                     </div>
                     </a>
                 </Link>

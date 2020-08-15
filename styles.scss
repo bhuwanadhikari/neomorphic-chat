@@ -448,7 +448,7 @@ html {
         display: flex;
 
         .messageInput {
-            margin: auto 20px;
+            margin: auto 10px;
             flex: 4;
 
             input {
@@ -470,12 +470,31 @@ html {
 
 .chatbody {
 
+    ul::-webkit-scrollbar {
+        width: 0.4em;
+    }
+
+    ul::-webkit-scrollbar-track {
+
+        width: 0.5em;
+        -webkit-box-shadow: transparent;
+    }
+
+    ul::-webkit-scrollbar-thumb {
+
+        width: 0.5em;
+        background-color: #dae1f0;
+        // outline: 1px solid #e8ffe4;
+    }
 
     ul {
 
         max-height: calc(100vh - 202px);
         overflow-y: scroll;
         overflow-x: visible;
+
+
+
         >div {
             margin: 18px auto;
             border-bottom-right-radius: 10;
@@ -521,4 +540,42 @@ html {
 
 .chatbody {
     height: 100%;
+}
+
+
+////////////////////
+///homepage
+// /////////////////
+.homepage {
+    .chip {
+        width: 80%;
+        margin: auto;
+        margin-top: 30%;
+        color: var(--greyDark);
+        text-align: center;
+        justify-content: center;
+        font-weight: bold;
+    }
+
+    div {
+        display: block;
+    }
+    .top{
+        font-size: 1.5em;
+        padding: 10px;
+    }
+    .bottom{
+        font-size: 0.9em;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .btn {
+        margin-top: 20px;
+        background-color: #ef5783ee;
+        width: 60%;
+        color: white;
+    }
 }
