@@ -17,6 +17,8 @@ io.on('connection', socket => {
     console.log("connected")
     ones.push(socket.id);
 
+    socket.emit('connection')
+
     //when disconnects
     socket.on('disconnect', ()=> {
         console.log('disconnnected')
@@ -28,7 +30,7 @@ io.on('connection', socket => {
     console.log(ones);
     socket.on('message', (data) => {
         console.log(data)
-        socket.emit('message', data)
+        io.emit('message', data)
     })
 })
 

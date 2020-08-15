@@ -16,15 +16,20 @@
     "strangers"
   ],
   "nodemonConfig": {
-    "ignore": ["pages/*", "components/*"]
+    "ignore": [
+      "pages/*",
+      "components/*"
+    ]
   },
   "author": "bhuwan adhikari",
   "license": "ISC",
   "dependencies": {
+    "@zeit/next-sass": "^1.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "next": "^9.5.2",
     "next-sass": "^1.0.3",
+    "node-sass": "^4.14.1",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "socket.io": "^2.3.0",

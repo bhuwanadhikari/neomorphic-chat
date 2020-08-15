@@ -5,6 +5,9 @@ import Navigation from '../components/Navigation';
 import io from 'socket.io-client';
 import { serverUrl } from '../constants';
 
+import '../styles.scss';
+import Layout from '../components/Layout';
+
 
 
 function useSocket(url) {
@@ -44,6 +47,11 @@ function Chat() {
             // HelloWorld
         }
         if (socket) {
+
+            socket.on('connection', data => {
+
+            })
+
             socket.on('message', data => {
                 const tempMessages = messages;
                 tempMessages.push(data);
@@ -70,24 +78,37 @@ function Chat() {
     }
 
     return <>
-        <Navigation />
+        <Layout>
+            <div className="components">
+                <div>here is the chatpage</div>
 
-        <div>here is the chatpage</div>
+
+                <div>Messages</div>
+                <div>
+                    <ul>
+                        {messages.map((instance, index) => {
+                            return <li key={index}> {instance.body}</li>
+                        })}
+                    </ul>
+                </div>
 
 
-        <div>Messages</div>
-        <div>
-            <ul>
-                {messages.map((instance, index) => {
-                    return <li key={index}> {instance.body}</li>
-                })}
-            </ul>
-        </div>
+            </div>
 
-        <form onSubmit={_send}>
-            <input name="body" type="text" value={messageData.body} onChange={_messageDataChange} />
-            <button type='submit'>Submit</button>
-        </form>
+            <div className="components footer">
+                <div>
+                    stop
+                </div>
+                <form onSubmit={_send}>
+                    <input name="body" type="text" value={messageData.body} onChange={_messageDataChange} />
+                    <button type='submit'>Submit</button>
+                </form>
+                <div>
+                    send
+                </div>
+            </div>
+        </Layout>
+
 
     </>
 }

@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 function Navigation() {
     return (
-        <nav>
+        <nav className = "components navbar">
             <div>
                 <Link href='/chat'>
                     <a title="Start Chatting">Start Chatting</a>
@@ -18,7 +18,6 @@ function Navigation() {
                     <a title="go-chat about page">About</a>
                 </Link>
             </div>
-
         </nav>
     )
 }
