@@ -65,6 +65,7 @@ function Chat() {
     }
 
     const _send = (e) => {
+        if (!messageData.body) return;
         socket.emit('message', {
             body: messageData.body,
             from: socket.id,
@@ -81,8 +82,8 @@ function Chat() {
 
     try {
         var allMessages = document.getElementsByClassName("message");
-        console.log(allMessages[allMessages.length-1])
-        allMessages[allMessages.length-1].scrollIntoView();
+        console.log(allMessages[allMessages.length - 1])
+        allMessages[allMessages.length - 1].scrollIntoView();
     } catch (e) { }
 
 
@@ -94,7 +95,19 @@ function Chat() {
                 <div>
                     <ul>
                         {messagesArr.map((instance, index) => {
-                            return <div className={`${instance.from === socket.id ? 'mero' : null}`} key={index}>  <div className={`chip message `}> {instance.body}</div></div>
+
+                            const isMine = instance.from === socket.id
+                            return <div
+                                className={`${isMine ? 'mero' : null}`} key={index}
+                            >
+                                
+                                {!isMine ? <div className='chip him'>Mikky</div> : null}
+                                <div className={`chip message `}>
+                                    {instance.body}
+                                </div>
+                                {isMine ? <div className='chip me'>You</div> : null}
+                                
+                            </div>
                         })}
                     </ul>
                 </div>

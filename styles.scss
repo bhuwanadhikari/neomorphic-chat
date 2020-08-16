@@ -18,6 +18,11 @@ $shadow: .3rem .3rem .6rem var(--greyLight-2),
 $inner-shadow: inset .2rem .2rem .5rem var(--greyLight-2),
 inset -.2rem -.2rem .5rem var(--white);
 
+$low-shadow: .1rem .1rem .2rem var(--greyLight-2),
+-.067rem -.067rem .0167rem var(--white);
+
+
+
 
 *,
 *::before,
@@ -62,6 +67,7 @@ html {
 
     @media screen and (max-width: 520px) {
         padding: 8px;
+
     }
 }
 
@@ -253,9 +259,9 @@ html {
     &__input {
         border: none;
         padding: 13px 18px;
-        border-radius: 10px;
+        border-radius: 6px;
         font-weight: bolder;
-        box-shadow: $inner-shadow;
+        box-shadow: $shadow;
         background: none;
         font-family: inherit;
         color: var(--greyDark);
@@ -266,7 +272,7 @@ html {
 
         &:focus {
             outline: none;
-            box-shadow: $shadow;
+            box-shadow: $low-shadow
         }
     }
 
@@ -492,20 +498,41 @@ html {
         max-height: calc(100vh - 202px);
         overflow-y: scroll;
         overflow-x: visible;
+        font-size: 0.9em;
+        width: calc(100% + 16px);
+        position: relative;
+        left: -8px;
 
+        .me,
+        .him {
+            color: #ef5783;
+            font-weight: bold;
+            font-size: 0.8em;
+        }
+
+        .him {
+            margin-left: 15px;
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-top-left-radius: 0;
+        }
 
 
         >div {
             margin: 18px auto;
-            border-bottom-right-radius: 10;
-            border-top-left-radius: 0;
+
+            display: flex;
+            justify-content: flex-start;
 
             .message {
                 display: inline-block;
-                // background-color: #eaeaea;
                 border-bottom-right-radius: 10px;
                 border-top-left-radius: 0;
-                margin: auto 10px;
+                border-bottom-left-radius: 0;
+                margin: auto 12px;
+                margin-left: 8px;
+                color: #123456
+
             }
         }
 
@@ -513,10 +540,26 @@ html {
             display: flex;
             justify-content: flex-end;
 
-            div {
+
+            .message {
+
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 10px;
                 border-top-left-radius: 10px;
+                margin-left: 12px;
+                margin-right: 8px;
+
+            }
+
+            .me {
+                margin-right: 15px;
+                border-top-left-radius: 0;
+                border-bottom-left-radius: 0;
                 border-bottom-right-radius: 0;
             }
+
+
         }
     }
 }
@@ -532,10 +575,6 @@ html {
         padding: 0px;
         margin-top: 10px;
     }
-}
-
-.mero {
-    // background-color: #d3deee;
 }
 
 .chatbody {
@@ -560,11 +599,13 @@ html {
     div {
         display: block;
     }
-    .top{
+
+    .top {
         font-size: 1.5em;
         padding: 10px;
     }
-    .bottom{
+
+    .bottom {
         font-size: 0.9em;
     }
 
