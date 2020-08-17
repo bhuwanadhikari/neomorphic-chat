@@ -14,7 +14,8 @@ import { faPaperPlane, faStop } from '@fortawesome/free-solid-svg-icons'
 function useSocket(url) {
     const [socket, setSocket] = React.useState(null)
     React.useEffect(() => {
-        const socketIo = io(url)
+        const socketIo = io(url);
+        console.log(socketIo.id)
         setSocket(socketIo)
         function cleanup() {
             socketIo.disconnect()
@@ -27,36 +28,55 @@ function useSocket(url) {
 
 
 function Chat() {
-    const socket = useSocket(serverUrl)
+    const socket = useSocket(serverUrl);
+    const [connectionData, setConnectionData] = React.useState({
+        isConnected: false,
+        roomIndex: null,
+    })
     const [messagesArr, setMessagesArr] = React.useState([]);
     const [messageData, setMessageData] = React.useState({
         body: ''
     });
 
-    const [last, setLast] = React.useState(null)
+
+    const [last, setLast] = React.useState(null);
 
     React.useEffect(() => {
         function handleEvent(payload) {
             console.log(payload)
             // HelloWorld
         }
+        console.log(socket)
         if (socket) {
 
-            socket.on('connection', data => {
+            setConnectionData(() => ({ ...connectionData, isConnected: true }))
 
-            })
+            socket.on('connect', (soc)=>{
+                console.log('connected with the server here', soc)
+            });
+
+            socket.on('join_room', roomIndex => {
+                console.log('connected to room', roomIndex);
+                setConnectionData(() => ({ ...connectionData, roomIndex: roomIndex }))
+            });
+
+            socket.on('leave_room', () => {
+                console.log('disconnected from room');
+                setConnectionData(() => ({ ...connectionData, roomIndex: null }))
+            });
 
             socket.on('message', data => {
                 setMessagesArr((messagesArr) => [...messagesArr, data]);
                 setMessageData(messageData => ({ ...messageData, body: '' }));
-            })
+            });
         }
     }, [socket]);
 
     React.useEffect(() => {
-        console.log(messagesArr.length)
         setLast(messagesArr.length - 1)
-    }, [messagesArr])
+    }, [messagesArr]);
+    React.useEffect(() => {
+    }, [connectionData])
 
 
     const _messageDataChange = (e) => {
@@ -82,12 +102,12 @@ function Chat() {
 
     try {
         var allMessages = document.getElementsByClassName("message");
-        console.log(allMessages[allMessages.length - 1])
+        // console.log(allMessages[allMessages.length - 1])
         allMessages[allMessages.length - 1].scrollIntoView();
     } catch (e) { }
 
+    console.log('Connection Data:', connectionData)
 
-    console.log("last element is", last)
 
     return <>
         <Layout>
@@ -100,13 +120,13 @@ function Chat() {
                             return <div
                                 className={`${isMine ? 'mero' : null}`} key={index}
                             >
-                                
+
                                 {!isMine ? <div className='chip him'>Mikky</div> : null}
                                 <div className={`chip message `}>
                                     {instance.body}
                                 </div>
                                 {isMine ? <div className='chip me'>You</div> : null}
-                                
+
                             </div>
                         })}
                     </ul>

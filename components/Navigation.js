@@ -4,12 +4,10 @@ import { withRouter } from 'next/router'
 
 function Navigation(props) {
 
-    console.log(props.router.pathname)
 
     React.useEffect(() => {
         const links = document.getElementsByTagName('a');
         for (let link of links) {
-            console.log(link)
             if (link.getAttribute('href') === props.router.pathname) {
                 link.classList.add('activeLink');
             } else {
@@ -27,14 +25,14 @@ function Navigation(props) {
                     <a title="go-chat home page">
                         <div className="chip btn btn__secondary">
                             HOME    
-                    </div>
+                        </div>
                     </a>
                 </Link>
                 <Link href='/chat'>
                     <a title="Start Chatting">
                         <div className="chip btn btn__secondary">
                             CHAT
-                    </div>
+                        </div>
                     </a>
                 </Link>
 
@@ -42,7 +40,7 @@ function Navigation(props) {
                     <a title="go-chat about page">
                         <div className="chip btn btn__secondary">
                             ABOUT
-                    </div>
+                        </div>
                     </a>
                 </Link>
             </nav >

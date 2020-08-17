@@ -3,7 +3,8 @@
 const app = require('express')()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
-const next = require('next')
+const next = require('next');
+const { link } = require('fs');
 
 const dev = process.env.NODE_ENV !== 'production'
 const nextApp = next({ dev })
@@ -24,17 +25,26 @@ const rooms = [];
 
 const pool = [];
 
-function addRoom(rechts, links) {
-    rooms.push([rechts, links])
-}
-
-function clearPool() {
-    pool.length = 0;
-}
 
 // socket.io server
 io.on('connection', socket => {
-    console.log("connected");
+
+
+    function addRoom(rechts, links) {
+        console.log('room created', rechts, links);
+        rooms.push([rechts, links])
+        socket.broadcast.to(rechts).emit('join_room', rooms.length - 1)
+        socket.broadcast.to(links).emit('join_room', rooms.length - 1)
+    }
+
+    function clearPool() {
+        pool.length = 0;
+        // socket.broadcast.to(rechts).emit('leave_room')
+        // socket.broadcast.to(links).emit('leave_room')
+    }
+    
+    socket.emit('connect', socket);
+
 
     pool.push(socket.id);
     if (pool.length === 2) {
@@ -42,16 +52,14 @@ io.on('connection', socket => {
         addRoom(pool[0], pool[1]);
         //clear the pool
         clearPool();
-
-
         console.log("Rooms are", rooms);
         console.log("Pool is:", pool);
     } else {
-
-
         console.log("Rooms are", rooms);
         console.log("Pool is:", pool);
     }
+
+
 
 
     //when disconnects
@@ -62,8 +70,13 @@ io.on('connection', socket => {
         //if already in rooms
         if (selectedRoom) {
             const roomIndex = rooms.indexOf(selectedRoom);
-            pool.push(rooms[roomIndex].filter(id => id !== socket.id)[0]);
+            //widow goes to pool
+            const widow = rooms[roomIndex].filter(id => id !== socket.id)[0]
+            pool.push(widow);
+            //both will leave  room
             rooms.splice(roomIndex, 1);
+            socket.broadcast.to(widow).emit('leave_room');
+
         } else {
             pool.splice(pool.indexOf(socket.id), 1);
         }
@@ -80,8 +93,7 @@ io.on('connection', socket => {
 
 
     socket.on('message', (data) => {
-        console.log(data)
-        io.emit('message', data)
+        io.emit('message', data);
     })
 })
 

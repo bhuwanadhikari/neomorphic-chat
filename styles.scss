@@ -397,7 +397,7 @@ html {
 }
 
 .navbar {
-    margin: 10px auto 20px auto;
+    margin: 10px auto 10px auto !important;
     width: 95%;
     max-width: 500px;
     display: flex;
@@ -406,13 +406,13 @@ html {
 
     a {
         flex: 1;
-        margin: auto 20px;
+        margin: auto 15px;
         text-decoration: none;
         -webkit-tap-highlight-color: transparent;
         text-align: center;
 
         .chip {
-            // padding: 10px 30px;
+            padding: 5px 10px;
             text-align: center;
             font-weight: bold;
             text-decoration: none;
@@ -495,13 +495,17 @@ html {
 
     ul {
 
-        max-height: calc(100vh - 202px);
+        max-height: calc(100vh - 190px);
         overflow-y: scroll;
         overflow-x: visible;
         font-size: 0.9em;
         width: calc(100% + 16px);
         position: relative;
         left: -8px;
+
+        @media screen and (max-width: 500px) {
+            max-height: calc(100vh - 170px);
+        }
 
         .me,
         .him {
@@ -519,7 +523,7 @@ html {
 
 
         >div {
-            margin: 18px auto;
+            margin: 14px auto;
 
             display: flex;
             justify-content: flex-start;
@@ -532,7 +536,6 @@ html {
                 margin: auto 12px;
                 margin-left: 8px;
                 color: #123456
-
             }
         }
 
@@ -567,7 +570,7 @@ html {
 .border {
     height: 4px !important;
     box-sizing: border-box;
-    margin-top: 30px;
+    margin-top: 25px;
     padding: 0;
     margin-bottom: 10px;
 

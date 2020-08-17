@@ -12,9 +12,10 @@ function MyApp({ Component, pageProps }) {
     return (
         <>
             <Head>
+                <meta name="theme-color" content="#E4EBF5" />
                 <title>Go Chat</title>
             </Head>
-            <div className = "components">
+            <div className="components">
 
                 <Navigation />
                 <Component {...pageProps} />
