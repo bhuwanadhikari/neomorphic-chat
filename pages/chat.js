@@ -11,27 +11,11 @@ import { faPaperPlane, faStop } from '@fortawesome/free-solid-svg-icons'
 
 
 
-function useSocket(url) {
-    const [socket, setSocket] = React.useState(null)
-    React.useEffect(() => {
-        const socketIo = io(url);
-        console.log(socketIo.id)
-        setSocket(socketIo)
-        function cleanup() {
-            socketIo.disconnect()
-        }
-        return cleanup
-    }, [])
-    return socket
-}
-
-
-
 function Chat() {
-    const socket = useSocket(serverUrl);
+    const [socket, setSocket] = React.useState(null)
     const [connectionData, setConnectionData] = React.useState({
         isConnected: false,
-        roomIndex: null,
+        partner: null,
     })
     const [messagesArr, setMessagesArr] = React.useState([]);
     const [messageData, setMessageData] = React.useState({
@@ -42,34 +26,46 @@ function Chat() {
     const [last, setLast] = React.useState(null);
 
     React.useEffect(() => {
-        function handleEvent(payload) {
-            console.log(payload)
-            // HelloWorld
-        }
-        console.log(socket)
-        if (socket) {
-
+        console.log('Mounted')
+        const socketIo = io(serverUrl);
+        console.log(socketIo.id);
+        if (socketIo) {
+            setSocket(socketIo);
             setConnectionData(() => ({ ...connectionData, isConnected: true }))
+        }
 
-            socket.on('connect', (soc)=>{
-                console.log('connected with the server here', soc)
-            });
+        function cleanup() {
+            socketIo.disconnect();
+            socketIo.off()
+        }
+        return cleanup
+    }, [])
 
-            socket.on('join_room', roomIndex => {
-                console.log('connected to room', roomIndex);
-                setConnectionData(() => ({ ...connectionData, roomIndex: roomIndex }))
+
+    React.useEffect(() => {
+        console.log('socket changed', socket)
+
+        if (socket) {
+            socket.on('join_room', partnerId => {
+                console.log('connected to partner', partnerId);
+                setConnectionData(() => ({ ...connectionData, partner: partnerId }))
             });
 
             socket.on('leave_room', () => {
                 console.log('disconnected from room');
-                setConnectionData(() => ({ ...connectionData, roomIndex: null }))
+                setConnectionData(() => ({ ...connectionData, partnerId: null }))
             });
 
-            socket.on('message', data => {
-                setMessagesArr((messagesArr) => [...messagesArr, data]);
+
+
+
+            socket.on('receive_message', ({ from, to, body }) => {
+                setMessagesArr((messagesArr) => [...messagesArr, { from, to, body }]);
                 setMessageData(messageData => ({ ...messageData, body: '' }));
             });
         }
+
+
     }, [socket]);
 
     React.useEffect(() => {
@@ -86,10 +82,10 @@ function Chat() {
 
     const _send = (e) => {
         if (!messageData.body) return;
-        socket.emit('message', {
+        socket.emit('send_message', {
             body: messageData.body,
             from: socket.id,
-            to: null,
+            to: connectionData.partner,
         })
         e.preventDefault();
     }

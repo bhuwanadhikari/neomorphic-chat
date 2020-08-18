@@ -33,17 +33,14 @@ io.on('connection', socket => {
     function addRoom(rechts, links) {
         console.log('room created', rechts, links);
         rooms.push([rechts, links])
-        socket.broadcast.to(rechts).emit('join_room', rooms.length - 1)
-        socket.broadcast.to(links).emit('join_room', rooms.length - 1)
+        io.to(rechts).emit('join_room', links)
+        io.to(links).emit('join_room', rechts)
     }
 
     function clearPool() {
         pool.length = 0;
-        // socket.broadcast.to(rechts).emit('leave_room')
-        // socket.broadcast.to(links).emit('leave_room')
     }
-    
-    socket.emit('connect', socket);
+
 
 
     pool.push(socket.id);
@@ -75,7 +72,7 @@ io.on('connection', socket => {
             pool.push(widow);
             //both will leave  room
             rooms.splice(roomIndex, 1);
-            socket.broadcast.to(widow).emit('leave_room');
+            io.to(widow).emit('leave_room');
 
         } else {
             pool.splice(pool.indexOf(socket.id), 1);
@@ -92,8 +89,10 @@ io.on('connection', socket => {
 
 
 
-    socket.on('message', (data) => {
-        io.emit('message', data);
+    socket.on('send_message', ({ from, to, body }) => {
+        console.log(from, to, body)
+        io.to(from).emit('receive_message', { from, to, body });
+        io.to(to).emit('receive_message', { from, to, body });
     })
 })
 
