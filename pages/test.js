@@ -1,33 +1,36 @@
 import React from 'react';
 
-import '../styles.scss';
+import Link from 'next/link';
+import Navigation from '../components/Navigation';
+import io from 'socket.io-client';
+import { serverUrl, appName } from '../constants';
+import Layout from '../components/Layout';
 
 
-const Test = (props) => {
-
-    const [data, setData] = React.useState({
-        status: false,
-        value: null,
-    });
-
-    const [count, setCount] = React.useState(0)
-
-    React.useEffect(() => {
-        setData({ ...data, value: count })
-    }, [count])
-
-    console.log('Connection Data:', count)
-
+function Test() {
 
 
     return <>
+        <Layout>
+            <div className='homepage'>
 
-        <h1>{JSON.stringify(data)}</h1>
+                <div className="chip homechip">
+                    <div className="top">go chat</div>
+                    <div className="bottom">
+                        {appName} is the best chat app in the world with
+                        more than one billion users.
+                    </div>
+                </div>
 
-        <button onClick={() => {
-            setCount(count + 1)
-        }}>increase</button>
-
+                <Link href='/chat'>
+                    <a title="Start Chatting">
+                        <div className="chip btn btn__secondary">
+                            Start Chatting
+                    </div>
+                    </a>
+                </Link>
+            </div>
+        </Layout>
     </>
 }
 

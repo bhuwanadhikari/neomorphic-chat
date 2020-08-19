@@ -2,6 +2,7 @@ import React from 'react';
 
 import io from 'socket.io-client';
 import { serverUrl } from '../constants';
+import Router from 'next/router'
 
 import '../styles.scss';
 import Layout from '../components/Layout';
@@ -9,55 +10,81 @@ import Layout from '../components/Layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperPlane, faStop } from '@fortawesome/free-solid-svg-icons'
 
+const useFocus = () => {
+    const htmlElRef = React.useRef(null)
+    const setFocus = () => { htmlElRef.current && htmlElRef.current.focus() }
+
+    return [htmlElRef, setFocus]
+}
+
+function cleanup(socket) {
+    socket.disconnect();
+    socket.off()
+}
+
+function connectToServer(url) {
+    return io(url);
+}
+const
+    CONNECTING = 'Connecting To Server..',
+    FINDING = 'Searching Partner...';
+
 
 
 function Chat() {
+    const [time, setTime] = React.useState(0)
     const [socket, setSocket] = React.useState(null)
-    const [connectionData, setConnectionData] = React.useState({
-        isConnected: false,
-        partner: null,
-    })
+    const [partner, setPartner] = React.useState(null);
+    const [connectionState, setConnectionState] = React.useState(CONNECTING);
+    const [partnerDied, setPartnerDied] = React.useState(false);
     const [messagesArr, setMessagesArr] = React.useState([]);
     const [messageData, setMessageData] = React.useState({
         body: ''
     });
-
+    const [inputRef, setInputFocus] = useFocus()
 
     const [last, setLast] = React.useState(null);
 
+
     React.useEffect(() => {
         console.log('Mounted')
-        const socketIo = io(serverUrl);
-        console.log(socketIo.id);
+        const socketIo = connectToServer(serverUrl);
         if (socketIo) {
             setSocket(socketIo);
-            setConnectionData(() => ({ ...connectionData, isConnected: true }))
+            setConnectionState(FINDING);
+            setPartnerDied(false)
         }
-
-        function cleanup() {
-            socketIo.disconnect();
-            socketIo.off()
-        }
-        return cleanup
+        return () => cleanup(socketIo)
     }, [])
 
+
+    const restartConnection = () => {
+        cleanup(socket);
+        const socketIo = connectToServer(serverUrl);
+        setSocket(socketIo);
+        setMessagesArr([]);;
+        setPartnerDied(false);
+        setConnectionState(FINDING)
+    }
 
     React.useEffect(() => {
         console.log('socket changed', socket)
 
+
+
         if (socket) {
             socket.on('join_room', partnerId => {
                 console.log('connected to partner', partnerId);
-                setConnectionData(() => ({ ...connectionData, partner: partnerId }))
+                setConnectionState(null);
+                setPartner(partnerId)
             });
 
             socket.on('leave_room', () => {
                 console.log('disconnected from room');
-                setConnectionData(() => ({ ...connectionData, partnerId: null }))
+                setConnectionState(null);
+                setPartnerDied(true);
+                setPartner(null)
             });
-
-
-
 
             socket.on('receive_message', ({ from, to, body }) => {
                 setMessagesArr((messagesArr) => [...messagesArr, { from, to, body }]);
@@ -69,10 +96,9 @@ function Chat() {
     }, [socket]);
 
     React.useEffect(() => {
-        setLast(messagesArr.length - 1)
-    }, [messagesArr]);
-    React.useEffect(() => {
-    }, [connectionData])
+        setLast(messagesArr.length - 1);
+        setTime((new Date()).getTime());
+    }, [messagesArr, partnerDied, connectionState, partner]);
 
 
     const _messageDataChange = (e) => {
@@ -80,14 +106,19 @@ function Chat() {
         setMessageData({ [name]: value });
     }
 
+    const _nextChat = () => {
+        restartConnection();
+    }
+
     const _send = (e) => {
+        e.preventDefault();
+        setInputFocus();
         if (!messageData.body) return;
         socket.emit('send_message', {
             body: messageData.body,
             from: socket.id,
-            to: connectionData.partner,
+            to: partner,
         })
-        e.preventDefault();
     }
 
     const _keyDown = (e) => {
@@ -101,15 +132,36 @@ function Chat() {
         // console.log(allMessages[allMessages.length - 1])
         allMessages[allMessages.length - 1].scrollIntoView();
     } catch (e) { }
+    try {
+        document.getElementsByClassName("nextChat")[0].scrollIntoView();
+    } catch (e) { }
 
-    console.log('Connection Data:', connectionData)
+
+    let Loader = null;
+    if (connectionState === CONNECTING || connectionState === FINDING) {
+
+        Loader = <div className="circle">
+            <span className="circle__btn">
+                {connectionState}
+            </span>
+            <span className="circle__back-1"></span>
+            <span className="circle__back-2"></span>
+        </div>
+
+    }
 
 
     return <>
         <Layout>
             <div className="chatbody">
+                {Loader}
+
                 <div>
                     <ul>
+                        {!connectionState && partner ?
+                            <div className='chip connectionMessage'>An stranger connected, say <strong> &nbsp;Hi</strong></div> :
+                            null
+                        }
                         {messagesArr.map((instance, index) => {
 
                             const isMine = instance.from === socket.id
@@ -125,6 +177,23 @@ function Chat() {
 
                             </div>
                         })}
+
+                        {!partner && partnerDied ?
+                            <div className='chip connectionMessage'>User Disconnected</div> :
+                            null
+                        }
+
+                        {!partner && partnerDied ?
+                            <div
+                                className="btn btn__primary nextChat"
+                                onClick={_nextChat}
+                            >
+                                <p>Next Chat</p>
+                            </div> :
+                            null
+                        }
+
+
                     </ul>
                 </div>
 
@@ -148,15 +217,14 @@ function Chat() {
                             placeholder="Type your message..."
                             onKeyDown={_keyDown}
                             autoComplete="off"
+                            ref={inputRef}
                         />
                     </div>
-                    <div
-                        className="btn btn__secondary iconButton"
-                        onClick={_send}
-                    >
-                        <p>
-                            <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: '18px' }} color="#ef5783" /> </p>
-                    </div>
+
+                    <div onClick = {_send} className="btn btn__secondary"><p>
+                        <FontAwesomeIcon icon={faPaperPlane} style={{ fontSize: '18px' }} color="#ef5783" />
+                    </p></div>
+
                 </form>
             </div>
         </Layout>

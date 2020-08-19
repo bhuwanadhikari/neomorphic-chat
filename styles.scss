@@ -48,6 +48,11 @@ html {
     align-items: center;
     font-family: 'Comfortaa', Arial, sans-serif;
     background: var(--greyLight-1);
+
+    //hide next ko logo
+    >a {
+        display: none !important;
+    }
 }
 
 
@@ -167,10 +172,10 @@ html {
 
 /*  PLAY BUTTON  */
 .circle {
-    grid-column: 2 / 3;
-    grid-row: 4 / 6;
-    width: 9rem;
+    width: 70%;
     height: 100%;
+    margin: auto;
+    margin-top: 40%;
     justify-self: center;
     border-radius: 1rem;
     display: grid;
@@ -181,52 +186,34 @@ html {
     &__btn {
         grid-row: 1 / 2;
         grid-column: 1 / 2;
-        width: 6rem;
-        height: 6rem;
+        width: 100%;
+        height: 40px;
         display: flex;
-        margin: .6rem;
+        // padding: 10px 20px !important;
         justify-content: center;
         align-items: center;
-        border-radius: 50%;
-        font-size: 3.2rem;
-        color: var(--primary);
+        border-radius: 10px;
+        color: var(--greyDark);
         z-index: 300;
         background: var(--greyLight-1);
         box-shadow: $shadow;
-        cursor: pointer;
         position: relative;
 
         &.shadow {
             box-shadow: $inner-shadow;
         }
 
-        .play {
-            position: absolute;
-            opacity: 0;
-            transition: all .2s linear;
 
-            &.visibility {
-                opacity: 1;
-            }
-        }
-
-        .pause {
-            position: absolute;
-            transition: all .2s linear;
-
-            &.visibility {
-                opacity: 0;
-            }
-        }
     }
 
     &__back-1,
     &__back-2 {
         grid-row: 1 / 2;
         grid-column: 1 / 2;
-        width: 6rem;
-        height: 6rem;
-        border-radius: 50%;
+        width: 80%;
+        height: 40px;
+        max-width: 400px;
+        border-radius: 10px;
         filter: blur(1px);
         z-index: 100;
     }
@@ -476,6 +463,19 @@ html {
 
 .chatbody {
 
+    .connectionMessage {
+        margin: 20px 30px;
+        color: var(--greyDark);
+        text-align: center;
+    }
+
+    .nextChat {
+        width: 150px;
+        margin: auto;
+        text-align: center;
+    }
+    
+
     ul::-webkit-scrollbar {
         width: 0.4em;
     }
@@ -515,11 +515,13 @@ html {
         }
 
         .him {
+            padding: 6px 10px;
             margin-left: 15px;
             border-top-right-radius: 0;
             border-bottom-right-radius: 0;
             border-top-left-radius: 0;
         }
+
 
 
         >div {
@@ -556,6 +558,7 @@ html {
             }
 
             .me {
+                padding: 6px 10px;
                 margin-right: 15px;
                 border-top-left-radius: 0;
                 border-bottom-left-radius: 0;
@@ -563,6 +566,10 @@ html {
             }
 
 
+        }
+
+        .message {
+            padding: 6px 10px;
         }
     }
 }
